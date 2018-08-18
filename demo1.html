@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo 1</title>
+    <style>
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0 4px;
+        }
+
+        /* Create four equal columns that sits next to each other */
+
+        .column {
+            flex: 50%;
+            max-width: 50%;
+        }
+
+        .column img {
+            width: 100%;
+            margin-top: 8px;
+            vertical-align: middle;
+        }
+
+        /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+
+        @media screen and (max-width: 600px) {
+            .column {
+                flex: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<script src="./lib/react.js"></script>
+<script src="./lib/react-dom.js"></script>
+<script src="./lib/babel.min.js"></script>
+
+<body style="background: black; color: white">
+    <div id="root"></div>
+    <script type="text/babel">
+       function imagesLoaded(parentNode) {
+            const imgElements = [...parentNode.querySelectorAll("img")];
+            for (let i = 0; i < imgElements.length; i += 1) {
+                const img = imgElements[i];
+                if (!img.complete) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        class Gallery extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    loading: true
+                };
+            }
+            async componentDidMount(){
+                const { message: dogList1} = await fetch('https://dog.ceo/api/breed/cattledog/images')
+                    .then(response => response.json());
+                const { message: dogList2} = await fetch('https://dog.ceo/api/breed/chow/images')
+                    .then(response => response.json());
+                this.setState({ loading: false, dogList1: dogList1.slice(0,10), dogList2: dogList2.slice(0, 10) });
+            }
+            renderImage(imageUrl) {
+                return (
+                    <div key={imageUrl}>
+                        <img
+                            src={imageUrl}
+                        />
+                    </div>
+                );
+            }
+
+            render() {
+                if (this.state.loading) {
+                    return <h1>Loading Cute Dogs :) </h1>;
+                }
+                return (
+                    <div
+                        className="row"
+                    >
+                        <div className="column">
+                            {this.state.dogList1 && this.state.dogList1.map(imageUrl => this.renderImage(imageUrl))}
+                        </div>
+                        <div className="column">
+                            {this.state.dogList2 && this.state.dogList2.map(imageUrl => this.renderImage(imageUrl))}
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<Gallery  />, document.getElementById("root"));
+        </script>
+</body>
+
+</html>

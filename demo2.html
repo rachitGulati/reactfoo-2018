@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo 2</title>
+</head>
+
+<script src="./lib/react.js"></script>
+<script src="./lib/react-dom.js"></script>
+<script src="./lib/babel.min.js"></script>
+<body style="padding-top: 100px; background: black; color: white">
+    <div id="root"></div>
+    <script type="text/babel">
+        var randomString = '';
+        class StopWatch extends React.Component {
+        state = {size: 0, running: false}
+        handleRunClick = () => {
+            const extra = 1000;
+            this.setState(state => {
+            if (state.running) {
+                clearInterval(this.timer)
+            } else {
+                this.timer = setInterval(() => {
+                const s = new Array(extra).fill('s').join('ssss');
+                randomString = randomString.concat(s);
+                this.setState({size: this.state.size + extra})
+                })
+            }
+            return {running: !state.running}
+            })
+        }
+        render() {
+            const {size, running} = this.state
+            const buttonStyles = {
+            border: '1px solid #ccc',
+            background: '#fff',
+            fontSize: '2em',
+            padding: 15,
+            margin: 5,
+            width: 400,
+            }
+            return (
+            <div style={{textAlign: 'center'}}>
+                <label
+                style={{
+                    fontSize: '5em',
+                    display: 'block',
+                }}
+                >
+                {size} Characters Leaked
+                </label>
+                <button
+                onClick={this.handleRunClick}
+                style={buttonStyles}
+                >
+                {running ? 'Stop Leaking' : 'Start Leaking'}
+                </button>
+            </div>
+            )
+        }
+        }
+        class App extends React.Component {
+        state = {}
+        render() {
+            return (
+            <div>
+                <hr /> <hr />
+                <StopWatch />
+                <hr /> <hr />
+            </div>
+            )
+        }
+        }
+        const element = <App />
+        ReactDOM.render(
+        element,
+        document.getElementById('root'),
+        )
+        </script>
+</body>
+</html>
